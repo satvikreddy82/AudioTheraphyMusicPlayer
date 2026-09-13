@@ -80,28 +80,20 @@ async function apiFetch(pathAndQuery, timeoutMs = REQUEST_TIMEOUT_MS) {
 }
 
 // ─────────────────────────────────────────────
-//  JSONP helper (iTunes fallback — no proxy needed)
+//  iTunes Fallback (Secure CORS fetch)
 // ─────────────────────────────────────────────
-let _cbCounter = 0;
-function jsonp(url, timeoutMs = REQUEST_TIMEOUT_MS) {
-  return new Promise((resolve, reject) => {
-    const cbName = `__atJSONP_${Date.now()}_${_cbCounter++}`;
-    const sep    = url.includes('?') ? '&' : '?';
-    let timer, script, settled = false;
-
-    const cleanup = () => {
-      settled = true; clearTimeout(timer);
-      delete window[cbName];
-      if (script && script.parentNode) script.parentNode.removeChild(script);
-    };
-
-    window[cbName] = (data) => { if (!settled) { cleanup(); resolve(data); } };
-    timer = setTimeout(() => { if (!settled) { cleanup(); reject(new Error('Request timed out.')); } }, timeoutMs);
-    script = document.createElement('script');
-    script.src = `${url}${sep}callback=${cbName}`;
-    script.onerror = () => { if (!settled) { cleanup(); reject(new Error('Network error.')); } };
-    document.head.appendChild(script);
-  });
+async function safeFetchItunes(url, timeoutMs = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal, mode: 'cors' });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -214,10 +206,10 @@ async function searchSongs(query, language = 'all', limit = 20) {
     console.warn('[MusicService] JioSaavn failed, falling back to iTunes:', err.message);
   }
 
-  // ── Fallback: iTunes JSONP (30s previews) ──
+  // ── Fallback: iTunes CORS fetch (30s previews) ──
   try {
     const url  = `${ITUNES_BASE}/search?term=${encodeURIComponent(fullQuery)}&entity=song&limit=${limit}&media=music`;
-    const data = await jsonp(url);
+    const data = await safeFetchItunes(url);
     return (data.results || []).map(item => ({
       id:           String(item.trackId || Math.random()),
       title:        item.trackName || 'Unknown Title',

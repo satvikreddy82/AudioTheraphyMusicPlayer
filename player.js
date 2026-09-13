@@ -808,13 +808,15 @@ function renderSongCards(tracks, container, isPlaylistView = false) {
           <i class="${inPlaylist ? 'fa-solid' : 'fa-regular'} fa-bookmark" aria-hidden="true"></i>
         </button>`;
 
+    const safeArt = sanitizeMediaUrl(track.thumbnailUrl, createArtworkFallback(56));
+    const safeTrackId = escapeHtml(track.id);
+
     card.innerHTML = `
       <img
-        src="${track.thumbnailUrl || ''}"
+        src="${safeArt}"
         alt="Artwork for ${escapeHtml(track.title)}"
         class="song-card-art"
         loading="lazy"
-        onerror="this.src='${createArtworkFallback(56)}'"
       />
       <div class="song-card-meta">
         <div class="song-card-title">${escapeHtml(track.title)}</div>
@@ -834,6 +836,12 @@ function renderSongCards(tracks, container, isPlaylistView = false) {
         </button>
       </div>
     `;
+
+    // Attach fallback onerror listener cleanly
+    const cardImg = card.querySelector('.song-card-art');
+    if (cardImg) {
+      cardImg.addEventListener('error', () => { cardImg.src = createArtworkFallback(56); }, { once: true });
+    }
 
     // Hook up playlist toggle or remove button
     if (isPlaylistView) {
@@ -880,18 +888,20 @@ function renderDiscoveryCards(tracks, container) {
 
     const inPlaylist = isInPlaylist(track.id);
 
+    const safeDiscArt = sanitizeMediaUrl(track.thumbnailUrl, createArtworkFallback(120));
+    const safeTrackId = escapeHtml(track.id);
+
     card.innerHTML = `
       <div class="disc-card-art-wrapper">
         <img
-          src="${track.thumbnailUrl || ''}"
+          src="${safeDiscArt}"
           alt="Artwork for ${escapeHtml(track.title)}"
           class="disc-card-art"
           loading="lazy"
-          onerror="this.src='${createArtworkFallback(120)}'"
         />
         <button
           class="disc-card-playlist-btn ${inPlaylist ? 'active' : ''}"
-          data-track-id="${track.id}"
+          data-track-id="${safeTrackId}"
           title="${inPlaylist ? 'Remove from Playlist' : 'Add to Playlist'}"
           aria-label="${inPlaylist ? 'Remove from Playlist' : 'Add to Playlist'}"
         >
@@ -908,6 +918,11 @@ function renderDiscoveryCards(tracks, container) {
         <div class="disc-card-artist">${escapeHtml(track.artist)}</div>
       </div>
     `;
+
+    const discImg = card.querySelector('.disc-card-art');
+    if (discImg) {
+      discImg.addEventListener('error', () => { discImg.src = createArtworkFallback(120); }, { once: true });
+    }
 
     const pBtn = card.querySelector('.disc-card-playlist-btn');
     if (pBtn) {
@@ -932,13 +947,24 @@ function renderDiscoveryCards(tracks, container) {
   });
 }
 
-/** Simple HTML escape to prevent XSS with API data */
+/** HTML escape to prevent XSS with untrusted API data */
 function escapeHtml(str) {
   return String(str || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Sanitize image or media URLs ensuring only safe https: or data: schemes are loaded */
+function sanitizeMediaUrl(urlStr, fallback = '') {
+  if (!urlStr || typeof urlStr !== 'string') return fallback;
+  const trimmed = urlStr.trim();
+  if (trimmed.startsWith('https://') || trimmed.startsWith('data:image/') || trimmed.startsWith('/')) {
+    return escapeHtml(trimmed);
+  }
+  return fallback;
 }
 
 // ─────────────────────────────────────────────
@@ -1578,6 +1604,18 @@ function init() {
     fpPrev.disabled  = !hasQueue;
     fpNext.disabled  = !hasQueue;
   });
+
+  // Safe image fallback listeners (no inline onerror needed)
+  if (npArtwork) {
+    npArtwork.addEventListener('error', () => {
+      npArtwork.src = createArtworkFallback(300);
+    });
+  }
+  if (fpArtwork) {
+    fpArtwork.addEventListener('error', () => {
+      fpArtwork.src = createArtworkFallback(52);
+    });
+  }
 
   // Load trending on startup
   loadTrending();
