@@ -1,0 +1,14 @@
+{
+  "name": "audio-theraphy",
+  "version": "1.0.0",
+  "description": "A modern music streaming/discovery application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "py": "python server.py"
+  },
+  "keywords": ["music", "pwa", "audio"],
+  "author": "satvikreddy82",
+  "license": "MIT"
+}

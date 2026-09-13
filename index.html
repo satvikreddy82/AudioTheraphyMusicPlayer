@@ -2,8 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Audio Theraphy</title>
+    <meta name="description" content="A modern music streaming/discovery application. Quiet Minds. Louder Frequencies..." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Audio Theraphy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
     <link rel="shortcut icon" href="assets/web-logo.png" type="image/x-icon" />
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,7 +37,12 @@
         <a href="#home">Home</a>
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
-        <a href="#start" class="nav-cta">Start Listening</a>
+        <a href="player.html#playlist">My Playlist</a>
+        <a href="player.html" class="nav-cta">Start Listening</a>
+        <button class="pwa-install-btn nav-install-btn" id="nav-install-btn" aria-label="Install App" hidden>
+          <i class="fa-solid fa-download" aria-hidden="true"></i>
+          <span>Install App</span>
+        </button>
       </div>
     </nav>
     <div class="hero">
@@ -41,8 +55,8 @@
           <div class="feature-item">✓Relaxation/Focus</div>
           <div class="feature-item">✓Discovering Songs</div>
         </div>
-        <button class="b1">Start Listening</button>
-        <button class="b2">Explore Music</button>
+        <button class="b1" onclick="window.location.href='player.html'">Start Listening</button>
+        <button class="b2" onclick="window.location.href='player.html'">Explore Music</button>
       </div>
       <div class="visual">
         <img src="assets/playerimg.png" alt="" />
@@ -154,7 +168,7 @@
 
         <p>Discover music that fits your mood, your moment, and your story.</p>
 
-        <button>Start Listening →</button>
+        <button onclick="window.location.href='player.html'">Start Listening →</button>
       </div>
     </section>
     <footer class="footer">
@@ -211,5 +225,23 @@
         <p>Made with ♡ and music.</p>
       </div>
     </footer>
+
+    <!-- PWA Install Banner (Floating) -->
+    <div class="pwa-install-banner" id="pwa-install-banner" hidden role="dialog" aria-label="Install Audio Theraphy App">
+      <div class="pwa-banner-content">
+        <img src="icons/icon-192.png" alt="Audio Theraphy" class="pwa-banner-icon" />
+        <div class="pwa-banner-text">
+          <strong>Install Audio Theraphy</strong>
+          <span>Add to your home screen for quick listening & offline access</span>
+        </div>
+      </div>
+      <div class="pwa-banner-actions">
+        <button class="pwa-install-btn pwa-banner-install-btn">Install</button>
+        <button class="pwa-banner-close" id="pwa-banner-close" aria-label="Dismiss">&times;</button>
+      </div>
+    </div>
+
+    <!-- PWA Service Worker & Controller -->
+    <script src="pwa.js?v=2.2" defer></script>
   </body>
 </html>

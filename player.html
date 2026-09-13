@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Audio Theraphy — Player</title>
+    <meta name="description" content="Search and listen to music with Audio Theraphy. Find songs across Telugu, Hindi, Tamil, English and more." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Audio Theraphy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+    <link rel="shortcut icon" href="assets/web-logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="player.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body>
+
+    <!-- ═══════════════════════════════════════
+         HEADER / NAVBAR
+    ═══════════════════════════════════════ -->
+    <header class="player-header" role="banner">
+      <div class="header-inner">
+
+        <!-- Brand -->
+        <a href="index.html" class="header-brand" aria-label="Go to Audio Theraphy home page">
+          <img src="assets/nav logo.jpeg" alt="Audio Theraphy logo" />
+          <span>audio.theraphy._</span>
+        </a>
+
+        <!-- Search Bar (center) -->
+        <div class="header-search" role="search">
+          <label for="search-input" class="sr-only">Search for music</label>
+          <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search for a song, artist or album..."
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search for a song, artist or album"
+          />
+          <button class="search-clear-btn" id="search-clear-btn" aria-label="Clear search" hidden>
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+          <button class="search-submit-btn" id="search-submit-btn" aria-label="Search">
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Actions: Playlist & Home & Install -->
+        <div class="header-actions">
+          <button class="pwa-install-btn header-install-btn" id="player-install-btn" aria-label="Install App" title="Install Audio Theraphy App" hidden>
+            <i class="fa-solid fa-download" aria-hidden="true"></i>
+            <span>Install</span>
+          </button>
+          <button class="header-playlist-btn" id="header-playlist-btn" aria-label="View My Playlist" title="View My Playlist">
+            <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+            <span>My Playlist</span>
+            <span class="playlist-counter-badge" id="header-playlist-count">0</span>
+          </button>
+          <a href="index.html" class="header-home-btn" aria-label="Back to home">
+            <i class="fa-solid fa-house" aria-hidden="true"></i>
+            <span>Home</span>
+          </a>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Language Filter -->
+    <div class="language-filter" role="navigation" aria-label="Language filters">
+      <div class="language-filter-inner">
+        <button class="lang-chip active" data-lang="all" aria-pressed="true">All</button>
+        <button class="lang-chip" data-lang="telugu" aria-pressed="false">Telugu</button>
+        <button class="lang-chip" data-lang="hindi" aria-pressed="false">Hindi</button>
+        <button class="lang-chip" data-lang="tamil" aria-pressed="false">Tamil</button>
+        <button class="lang-chip" data-lang="malayalam" aria-pressed="false">Malayalam</button>
+        <button class="lang-chip" data-lang="kannada" aria-pressed="false">Kannada</button>
+        <button class="lang-chip" data-lang="punjabi" aria-pressed="false">Punjabi</button>
+        <button class="lang-chip" data-lang="english" aria-pressed="false">English</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════ -->
+    <main class="player-main" id="main-content">
+
+      <!-- ─── Left Column: NOW PLAYING ─── -->
+      <section class="now-playing-section" aria-label="Now playing">
+        <div class="now-playing-card" id="now-playing-card">
+
+          <!-- Artwork -->
+          <div class="np-artwork-wrapper">
+            <div class="np-artwork-glow" id="np-artwork-glow"></div>
+            <img
+              src=""
+              alt="Album artwork"
+              class="np-artwork"
+              id="np-artwork"
+              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22><rect width=%22300%22 height=%22300%22 fill=%22%23120d1e%22/><text x=%2250%%22 y=%2250%%22 fill=%22%237C3AED%22 font-size=%2264%22 text-anchor=%22middle%22 dy=%22.3em%22>♪</text></svg>'"
+            />
+            <div class="np-idle-state" id="np-idle-state">
+              <div class="np-idle-icon">
+                <i class="fa-solid fa-music" aria-hidden="true"></i>
+              </div>
+              <p>Search for a song<br>to start listening.</p>
+            </div>
+          </div>
+
+          <!-- Track Info -->
+          <div class="np-info" id="np-info" hidden>
+            <div class="np-badge-row">
+              <div class="np-preview-badge" id="np-audio-badge">
+                <i class="fa-solid fa-music" aria-hidden="true"></i>
+                <span id="np-badge-text">Loading...</span>
+              </div>
+              <button class="np-playlist-btn" id="np-playlist-btn" title="Add to Playlist" aria-label="Add to Playlist">
+                <i class="fa-regular fa-bookmark" id="np-playlist-icon" aria-hidden="true"></i>
+                <span id="np-playlist-label">Add to Playlist</span>
+              </button>
+            </div>
+            <h2 class="np-title" id="np-title">—</h2>
+            <p class="np-artist" id="np-artist">—</p>
+            <p class="np-album" id="np-album">—</p>
+          </div>
+
+          <!-- Main Controls -->
+          <div class="np-controls" id="np-controls" hidden>
+            <!-- Progress -->
+            <div class="np-progress-wrapper">
+              <span class="np-time" id="np-current-time" aria-label="Current time">0:00</span>
+              <div class="np-progress-bar-container" id="np-progress-bar-container" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+                <div class="np-progress-bar-track">
+                  <div class="np-progress-bar-fill" id="np-progress-fill"></div>
+                  <div class="np-progress-thumb" id="np-progress-thumb"></div>
+                </div>
+              </div>
+              <span class="np-time" id="np-duration" aria-label="Total duration">0:30</span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="np-btn-row">
+              <button class="np-ctrl-btn" id="btn-prev" aria-label="Previous song">
+                <i class="fa-solid fa-backward-step" aria-hidden="true"></i>
+              </button>
+              <button class="np-play-pause-btn" id="btn-play" aria-label="Play">
+                <i class="fa-solid fa-play" aria-hidden="true" id="play-icon"></i>
+              </button>
+              <button class="np-ctrl-btn" id="btn-next" aria-label="Next song">
+                <i class="fa-solid fa-forward-step" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <!-- Volume -->
+            <div class="np-volume-row">
+              <button class="np-vol-btn" id="btn-mute" aria-label="Mute">
+                <i class="fa-solid fa-volume-high" id="vol-icon" aria-hidden="true"></i>
+              </button>
+              <label for="volume-slider" class="sr-only">Volume</label>
+              <input
+                type="range"
+                id="volume-slider"
+                class="volume-slider"
+                min="0"
+                max="100"
+                value="80"
+                step="1"
+                aria-label="Volume"
+              />
+            </div>
+          </div>
+
+          <!-- Loading overlay inside NP card -->
+          <div class="np-loading" id="np-loading" hidden>
+            <div class="spinner" aria-hidden="true"></div>
+            <span>Loading...</span>
+          </div>
+
+        </div><!-- /.now-playing-card -->
+      </section>
+
+      <!-- ─── Right Column: SEARCH RESULTS / PLAYLIST ─── -->
+      <section class="results-section" aria-label="Music selection">
+        <!-- View Tabs -->
+        <div class="results-tabs-wrapper">
+          <div class="results-tabs" role="tablist" aria-label="Music navigation">
+            <button class="results-tab-btn active" id="tab-search" role="tab" aria-selected="true" aria-controls="search-view">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <span>Explore Songs</span>
+            </button>
+            <button class="results-tab-btn" id="tab-playlist" role="tab" aria-selected="false" aria-controls="playlist-view">
+              <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+              <span>My Playlist</span>
+              <span class="tab-playlist-count" id="tab-playlist-count">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH VIEW -->
+        <div class="view-panel" id="search-view" role="tabpanel" aria-labelledby="tab-search">
+          <div class="results-header" id="results-header">
+            <h2 class="results-title" id="results-title">Discover Your Sound</h2>
+            <p class="results-subtitle" id="results-subtitle">Search for a song above to start listening.</p>
+          </div>
+
+          <!-- Loading state for results -->
+          <div class="results-loading" id="results-loading" hidden>
+            <div class="results-loading-inner">
+              <div class="spinner" aria-hidden="true"></div>
+              <span>Searching...</span>
+            </div>
+          </div>
+
+          <!-- Error / notice banner -->
+          <div class="results-notice" id="results-notice" hidden role="alert">
+            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+            <span id="results-notice-text"></span>
+          </div>
+
+          <!-- Song Cards Grid -->
+          <div class="results-grid" id="results-grid" role="list" aria-label="Search results list"></div>
+        </div>
+
+        <!-- PLAYLIST VIEW -->
+        <div class="view-panel" id="playlist-view" role="tabpanel" aria-labelledby="tab-playlist" hidden>
+          <!-- Playlists Selector Bar -->
+          <div class="playlists-bar" id="playlists-bar">
+            <div class="playlists-chips" id="playlists-chips" role="tablist" aria-label="Playlists list">
+              <!-- Dynamically populated playlist chips -->
+            </div>
+            <button class="playlist-new-btn" id="btn-create-playlist" title="Create New Playlist">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i>
+              <span>New Playlist</span>
+            </button>
+          </div>
+
+          <div class="playlist-header">
+            <div class="playlist-header-text">
+              <div class="playlist-title-row">
+                <h2 class="results-title clickable-title" id="current-playlist-title" title="Click to rename this playlist">My Playlist</h2>
+                <button class="playlist-title-edit-btn" id="btn-rename-playlist" title="Rename this playlist" aria-label="Rename this playlist">
+                  <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                  <span>Rename</span>
+                </button>
+              </div>
+              <p class="results-subtitle" id="playlist-subtitle">0 songs saved in this playlist.</p>
+            </div>
+            <div class="playlist-header-actions" id="playlist-header-actions">
+              <button class="playlist-action-btn primary" id="btn-playlist-play-all" title="Play all songs in playlist">
+                <i class="fa-solid fa-play" aria-hidden="true"></i>
+                <span>Play All</span>
+              </button>
+              <button class="playlist-action-btn secondary" id="btn-playlist-new-action" title="Create a new playlist">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>New Playlist</span>
+              </button>
+              <button class="playlist-action-btn secondary" id="btn-playlist-rename-action" title="Rename this playlist">
+                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                <span>Rename</span>
+              </button>
+              <button class="playlist-action-btn secondary" id="btn-playlist-clear" title="Clear all songs from this playlist">
+                <i class="fa-solid fa-broom" aria-hidden="true"></i>
+                <span>Clear Songs</span>
+              </button>
+              <button class="playlist-action-btn danger" id="btn-playlist-delete" title="Delete this playlist">
+                <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                <span>Delete Playlist</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="playlist-empty-state" id="playlist-empty" hidden>
+            <div class="playlist-empty-icon">
+              <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+            </div>
+            <h3 class="playlist-empty-title">This Playlist is Empty</h3>
+            <p class="playlist-empty-sub">
+              Save your favorite tracks to this playlist by clicking the bookmark icon on any song!
+            </p>
+            <div class="playlist-empty-actions">
+              <button class="playlist-empty-cta" id="btn-playlist-explore">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Explore Songs
+              </button>
+              <button class="playlist-empty-cta secondary" id="btn-playlist-empty-new">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> New Playlist
+              </button>
+            </div>
+          </div>
+
+          <!-- Playlist Items Grid -->
+          <div class="results-grid" id="playlist-grid" role="list" aria-label="Playlist items"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ═══════════════════════════════════════
+         DISCOVERY SECTIONS
+    ═══════════════════════════════════════ -->
+    <div class="discovery-sections">
+
+      <!-- Recommendations -->
+      <section class="discovery-section" id="recommendations-section" aria-label="Recommended songs">
+        <div class="discovery-header">
+          <h2 class="discovery-title" id="rec-title">Recommended For You</h2>
+          <p class="discovery-subtitle" id="rec-subtitle">Play a song to see personalised picks.</p>
+        </div>
+        <div class="discovery-scroll" id="recommendations-grid" aria-label="Recommendations" role="list"></div>
+      </section>
+
+      <!-- Trending -->
+      <section class="discovery-section" id="trending-section" aria-label="Trending songs">
+        <div class="discovery-header">
+          <h2 class="discovery-title" id="trending-title">Trending Now</h2>
+          <span class="discovery-badge" id="trending-badge">Live Chart</span>
+        </div>
+        <div class="discovery-loading" id="trending-loading">
+          <div class="spinner" aria-hidden="true"></div>
+          <span>Loading trending...</span>
+        </div>
+        <div class="discovery-scroll" id="trending-grid" aria-label="Trending songs" role="list" hidden></div>
+      </section>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         FIXED BOTTOM MUSIC PLAYER
+    ═══════════════════════════════════════ -->
+    <div class="fixed-player" id="fixed-player" aria-label="Music player controls" role="region" hidden>
+      <!-- Hidden native audio element -->
+      <audio id="audio-element" preload="none" aria-hidden="true"></audio>
+
+      <div class="fp-inner">
+        <!-- Track Info -->
+        <div class="fp-track-info">
+          <img src="" alt="" class="fp-artwork" id="fp-artwork" aria-hidden="true"
+            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22><rect width=%2248%22 height=%2248%22 fill=%22%23120d1e%22 rx=%228%22/><text x=%2250%%22 y=%2250%%22 fill=%22%237C3AED%22 font-size=%2224%22 text-anchor=%22middle%22 dy=%22.3em%22>♪</text></svg>'" />
+          <div class="fp-text">
+            <span class="fp-title" id="fp-title">—</span>
+            <span class="fp-artist" id="fp-artist">—</span>
+          </div>
+        </div>
+
+        <!-- Center Controls -->
+        <div class="fp-center">
+          <div class="fp-btn-row">
+            <button class="fp-ctrl-btn" id="fp-prev" aria-label="Previous song">
+              <i class="fa-solid fa-backward-step" aria-hidden="true"></i>
+            </button>
+            <button class="fp-play-btn" id="fp-play" aria-label="Play">
+              <i class="fa-solid fa-play" id="fp-play-icon" aria-hidden="true"></i>
+            </button>
+            <button class="fp-ctrl-btn" id="fp-next" aria-label="Next song">
+              <i class="fa-solid fa-forward-step" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- Progress -->
+          <div class="fp-progress-wrapper">
+            <span class="fp-time" id="fp-current-time">0:00</span>
+            <div class="fp-progress-bar-container" id="fp-progress-container" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+              <div class="fp-progress-track">
+                <div class="fp-progress-fill" id="fp-progress-fill"></div>
+              </div>
+            </div>
+            <span class="fp-time" id="fp-duration">0:30</span>
+          </div>
+        </div>
+
+        <!-- Volume -->
+        <div class="fp-vol-section">
+          <button class="fp-vol-btn" id="fp-mute" aria-label="Mute">
+            <i class="fa-solid fa-volume-high" id="fp-vol-icon" aria-hidden="true"></i>
+          </button>
+          <label for="fp-volume-slider" class="sr-only">Volume</label>
+          <input
+            type="range"
+            id="fp-volume-slider"
+            class="fp-volume-slider"
+            min="0"
+            max="100"
+            value="80"
+            step="1"
+            aria-label="Volume"
+          />
+        </div>
+      </div><!-- /.fp-inner -->
+    </div><!-- /#fixed-player -->
+
+    <!-- Bottom padding so content isn't hidden behind fixed player -->
+    <div class="fixed-player-spacer" id="fp-spacer" hidden></div>
+
+    <!-- ═══════════════════════════════════════
+         MODALS: PLAYLIST MANAGEMENT
+    ═══════════════════════════════════════ -->
+
+    <!-- Modal 1: Create / Rename Playlist -->
+    <div class="at-modal-backdrop" id="playlist-modal" hidden role="dialog" aria-modal="true" aria-labelledby="playlist-modal-title">
+      <div class="at-modal-card">
+        <div class="at-modal-header">
+          <h3 id="playlist-modal-title">Create New Playlist</h3>
+          <button class="at-modal-close" id="playlist-modal-close" aria-label="Close dialog">&times;</button>
+        </div>
+        <div class="at-modal-body">
+          <label for="playlist-name-input" class="sr-only">Playlist Name</label>
+          <input
+            type="text"
+            id="playlist-name-input"
+            class="at-modal-input"
+            placeholder="e.g. Late Night Vibes, Gym Energy..."
+            maxlength="40"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <p class="at-modal-hint" id="playlist-modal-hint">Choose a memorable name for your playlist.</p>
+        </div>
+        <div class="at-modal-footer">
+          <button class="at-modal-btn secondary" id="playlist-modal-cancel">Cancel</button>
+          <button class="at-modal-btn primary" id="playlist-modal-save">Save Playlist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 2: Add Track To Playlist Picker -->
+    <div class="at-modal-backdrop" id="add-to-playlist-modal" hidden role="dialog" aria-modal="true" aria-labelledby="add-to-playlist-title">
+      <div class="at-modal-card">
+        <div class="at-modal-header">
+          <h3 id="add-to-playlist-title">Add to Playlist</h3>
+          <button class="at-modal-close" id="add-to-playlist-close" aria-label="Close dialog">&times;</button>
+        </div>
+        <div class="at-modal-body">
+          <div class="modal-track-preview" id="modal-track-preview">
+            <img src="" alt="" id="modal-track-art" class="modal-track-art" />
+            <div class="modal-track-meta">
+              <strong id="modal-track-name">—</strong>
+              <span id="modal-track-artist">—</span>
+            </div>
+          </div>
+          <div class="modal-playlists-list" id="modal-playlists-list" role="list" aria-label="Choose playlist">
+            <!-- Dynamically populated with playlist choices -->
+          </div>
+          <button class="at-modal-inline-btn" id="modal-btn-create-inline">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+            <span>Create New Playlist</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="musicService.js?v=2.3"></script>
+    <script src="player.js?v=2.3"></script>
+    <script src="pwa.js?v=2.3" defer></script>
+
+  </body>
+</html>
