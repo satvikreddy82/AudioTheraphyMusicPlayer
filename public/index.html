@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Audio Theraphy</title>
+    <meta name="description" content="A modern music streaming/discovery application. Quiet Minds. Louder Frequencies..." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Audio Theraphy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+    <link rel="shortcut icon" href="assets/web-logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="assets/nav logo.jpeg" alt="Audio Theraphy logo" />
+        <span>audio.theraphy._</span>
+      </div>
+
+      <div class="navlink">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="player.html#playlist">My Playlist</a>
+        <a href="player.html" class="nav-cta">Start Listening</a>
+        <button class="pwa-install-btn nav-install-btn" id="nav-install-btn" aria-label="Install App" hidden>
+          <i class="fa-solid fa-download" aria-hidden="true"></i>
+          <span>Install App</span>
+        </button>
+      </div>
+    </nav>
+    <div class="hero">
+      <div class="Content">
+        <h1>Quiet Minds.Louder Frequencies...</h1>
+        <h2>Music that understands your mood.</h2>
+        <div class="feature">
+          <div class="feature-item">✓Personalized Music</div>
+          <div class="feature-item">✓Mood Based Listening</div>
+          <div class="feature-item">✓Relaxation/Focus</div>
+          <div class="feature-item">✓Discovering Songs</div>
+        </div>
+        <button class="b1" onclick="window.location.href='player.html'">Start Listening</button>
+        <button class="b2" onclick="window.location.href='player.html'">Explore Music</button>
+      </div>
+      <div class="visual">
+        <img src="assets/playerimg.png" alt="" />
+      </div>
+    </div>
+    <section class="feature-cards" id="features">
+      <div class="feature-heading">
+        <span>FEATURES</span>
+
+        <h2>
+          Everything you need for a
+          <em>better listening experience.</em>
+        </h2>
+
+        <p>
+          Discover a smarter way to listen, explore, and connect with music that
+          fits your mood.
+        </p>
+      </div>
+
+      <div class="cards-section">
+        <div class="card">
+          <div class="card-icon">🎵</div>
+
+          <h3>Personalised Playlists</h3>
+
+          <p>
+            Discover playlists tailored to your unique listening style and
+            preferences.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🧠</div>
+
+          <h3>Mood Based Listening</h3>
+
+          <p>
+            Find music that matches how you feel and creates the right
+            atmosphere.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🎯</div>
+
+          <h3>Focus & Relax</h3>
+
+          <p>
+            Curated sounds to help you focus, relax, study, or simply unwind.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">✨</div>
+
+          <h3>Discover New Music</h3>
+
+          <p>Explore new songs and artists that you might fall in love with.</p>
+        </div>
+      </div>
+    </section>
+    <section class="benefits" id="benefits">
+      <div class="benefit-content">
+        <h2>Why Audio Theraphy?</h2>
+
+        <h1>Music isn't just something you hear. It's something you feel.</h1>
+
+        <p>
+          Audio Theraphy helps you find the right music for every moment,
+          whether you want to relax, focus, or simply enjoy your favorite songs.
+        </p>
+
+        <div class="benefit-list">
+          <div class="benefit-item">
+            <h3>01. Find Your Mood</h3>
+            <p>Discover music that matches how you feel.</p>
+          </div>
+
+          <div class="benefit-item">
+            <h3>02. Focus Better</h3>
+            <p>Listen to music that helps you concentrate.</p>
+          </div>
+
+          <div class="benefit-item">
+            <h3>03. Relax & Unwind</h3>
+            <p>Enjoy calming music when you need a break.</p>
+          </div>
+
+          <div class="benefit-item">
+            <h3>04. Discover New Music</h3>
+            <p>Find new songs and artists you may love.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="benefit-visual">
+        <img src="assets/player2.png" alt="Listening to music" />
+      </div>
+    </section>
+    <section class="final-cta" id="start">
+      <div class="cta-content">
+        <span>START YOUR JOURNEY</span>
+
+        <h2>
+          Your mood has a soundtrack.
+          <em>Find it.</em>
+        </h2>
+
+        <p>Discover music that fits your mood, your moment, and your story.</p>
+
+        <button onclick="window.location.href='player.html'">Start Listening →</button>
+      </div>
+    </section>
+    <footer class="footer">
+      <div class="footer-content">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="assets/nav logo.jpeg" alt="Audio Theraphy logo" />
+            <span>audio.theraphy._</span>
+          </div>
+
+          <p>
+            Music that understands your mood. Find your sound, feel your moment.
+          </p>
+        </div>
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+
+          <a href="index.html">Home</a>
+          <a href="#features">Features</a>
+          <a href="#benefits">Benefits</a>
+          <a href="#reviews">Reviews</a>
+        </div>
+        <div class="footer-links">
+          <h3>Connect</h3>
+
+          <a
+            href="https://www.instagram.com/audio.theraphy._/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fa-brands fa-instagram"></i>
+            Instagram
+          </a>
+
+          <a
+            href="https://github.com/satvikreddy82"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fa-brands fa-github"></i>
+            GitHub
+          </a>
+
+          <a href="mailto:satvikreddy82@gmail.com">
+            <i class="fa-solid fa-envelope"></i>
+            Email
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Audio Theraphy. All rights reserved.</p>
+
+        <p>Made with ♡ and music.</p>
+      </div>
+    </footer>
+
+    <!-- PWA Install Banner (Floating) -->
+    <div class="pwa-install-banner" id="pwa-install-banner" hidden role="dialog" aria-label="Install Audio Theraphy App">
+      <div class="pwa-banner-content">
+        <img src="icons/icon-192.png" alt="Audio Theraphy" class="pwa-banner-icon" />
+        <div class="pwa-banner-text">
+          <strong>Install Audio Theraphy</strong>
+          <span>Add to your home screen for quick listening & offline access</span>
+        </div>
+      </div>
+      <div class="pwa-banner-actions">
+        <button class="pwa-install-btn pwa-banner-install-btn">Install</button>
+        <button class="pwa-banner-close" id="pwa-banner-close" aria-label="Dismiss">&times;</button>
+      </div>
+    </div>
+
+    <!-- PWA Service Worker & Controller -->
+    <script src="pwa.js?v=2.2" defer></script>
+  </body>
+</html>

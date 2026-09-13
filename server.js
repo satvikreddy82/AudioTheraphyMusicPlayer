@@ -12,7 +12,7 @@ const path = require('path');
 const url = require('url');
 
 const PORT = process.env.PORT || 5500;
-const STATIC_DIR = __dirname;
+const STATIC_DIR = fs.existsSync(path.join(__dirname, 'public')) ? path.join(__dirname, 'public') : __dirname;
 const JIOSAAVN_API = 'https://www.jiosaavn.com/api.php';
 
 const MIME_TYPES = {

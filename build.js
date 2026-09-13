@@ -1,11 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const DIST = path.join(__dirname, 'dist');
-if (fs.existsSync(DIST)) {
-  fs.rmSync(DIST, { recursive: true, force: true });
+const PUB = path.join(__dirname, 'public');
+if (!fs.existsSync(PUB)) {
+  fs.mkdirSync(PUB, { recursive: true });
 }
-fs.mkdirSync(DIST, { recursive: true });
 
 function copyRecursive(src, dest) {
   const stat = fs.statSync(src);
@@ -36,11 +35,11 @@ const itemsToCopy = [
 
 for (const item of itemsToCopy) {
   const srcPath = path.join(__dirname, item);
-  const destPath = path.join(DIST, item);
+  const destPath = path.join(PUB, item);
   if (fs.existsSync(srcPath)) {
     copyRecursive(srcPath, destPath);
-    console.log(`Copied ${item} -> dist/`);
   }
 }
 
-console.log('Build complete! Output in dist/');
+console.log('Build complete! Output in public/');
+

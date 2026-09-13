@@ -16,7 +16,11 @@ import sys
 import re
 
 PORT = 5500
-STATIC_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = (
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "public")
+    if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), "public"))
+    else os.path.dirname(os.path.abspath(__file__))
+)
 JIOSAAVN_API = "https://www.jiosaavn.com/api.php"
 
 # Allowed JioSaavn CDN domains regex

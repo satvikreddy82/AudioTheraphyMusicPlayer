@@ -1,6 +1,9 @@
 {
-  "outputDirectory": "dist",
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/player", "destination": "/player.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
