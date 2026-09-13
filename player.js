@@ -1073,7 +1073,11 @@ async function _startAudioLoad(track) {
 
     if (!audioUrl) {
       setVisible(npLoading, false);
-      showToast(`'${track.title}' \u2014 audio unavailable. Try another song.`);
+      const isProxyNeeded = track.isFullSong && !track.previewUrl;
+      const hint = isProxyNeeded
+        ? `'${track.title}' — audio unavailable. Please ensure the dev server ('node server.js') is running.`
+        : `'${track.title}' — audio unavailable. Try another song.`;
+      showToast(hint);
       setPlayState(false);
       return;
     }

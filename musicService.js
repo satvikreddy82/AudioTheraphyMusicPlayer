@@ -238,7 +238,8 @@ async function searchSongs(query, language = 'all', limit = 20) {
 async function getAudioUrl(track) {
   if (!track) return null;
   if (!track.isFullSong || !track.encryptedUrl) return track.previewUrl || null;
-  return resolveAudio(track);
+  const proxied = await resolveAudio(track);
+  return proxied || track.previewUrl || null;
 }
 
 /**
@@ -275,9 +276,9 @@ async function getTrendingSongs(country = 'in', limit = 12) {
     if (tracks.length > 0) return { tracks, isLive: false };
     throw new Error('empty');
   } catch {
-    // iTunes JSONP fallback
+    // iTunes CORS fallback
     try {
-      const data = await jsonp(`${ITUNES_BASE}/search?term=top+hits+2024+india&entity=song&limit=${limit}&media=music`);
+      const data = await safeFetchItunes(`${ITUNES_BASE}/search?term=top+hits+2024+india&entity=song&limit=${limit}&media=music`);
       const tracks = (data.results || []).filter(i => i.previewUrl).map(item => ({
         id:           String(item.trackId || Math.random()),
         title:        item.trackName || '',
@@ -309,7 +310,7 @@ function getCuratedFallbackTracks() {
       album: 'Brahmastra',
       artworkUrl: 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-500x500.jpg',
       thumbnailUrl: 'https://c.saavncdn.com/871/Brahmastra-Original-Motion-Picture-Soundtrack-Hindi-2022-20221006155213-150x150.jpg',
-      previewUrl: null,
+      previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/38/4c/5c/384c5c8f-3ff8-e457-b2f7-3158ce108649/mzaf_12389299033886433185.plus.aac.p.m4a',
       encryptedUrl: 'ID2ieOjCrwfgWvL5sXl4B1ImC5QfbsDyryhkSYK5IH2E7FCO52VR6yhNbcEbes5iCcja4+W8xhE0SwtCJToN4Bw7tS9a8Gtq',
       durationMs: 268000,
       genre: 'Hindi',
@@ -324,7 +325,7 @@ function getCuratedFallbackTracks() {
       album: 'RRR',
       artworkUrl: 'https://c.saavncdn.com/683/RRR-Telugu-Telugu-2022-20250828171313-500x500.jpg',
       thumbnailUrl: 'https://c.saavncdn.com/683/RRR-Telugu-Telugu-2022-20250828171313-150x150.jpg',
-      previewUrl: null,
+      previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8e/dd/a4/8edda474-3fe1-3fe6-43d3-765db520a29b/mzaf_11740310005222997767.plus.aac.p.m4a',
       encryptedUrl: 'ID2ieOjCrwfgWvL5sXl4B1ImC5QfbsDyK1tSoSB+oPrTJYqQ1jcTCNgc6b6boKXKeppOEkUoiK5Fp6jyXWA3QBw7tS9a8Gtq',
       durationMs: 214000,
       genre: 'Telugu',
@@ -339,7 +340,7 @@ function getCuratedFallbackTracks() {
       album: 'After Hours',
       artworkUrl: 'https://c.saavncdn.com/396/The-Highlights-English-2021-20240207045714-500x500.jpg',
       thumbnailUrl: 'https://c.saavncdn.com/396/The-Highlights-English-2021-20240207045714-150x150.jpg',
-      previewUrl: null,
+      previewUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/19/d6/60/19d660ff-e3a9-8377-15a3-ce4b28e89cac/mzaf_18422426156481158187.plus.aac.p.m4a',
       encryptedUrl: 'ID2ieOjCrwfgWvL5sXl4B1ImC5QfbsDy8IXxuTNJ1oLbvDGDneZj5h25kdaKPCof228ruhJnw7PIr7uKBnaPmxw7tS9a8Gtq',
       durationMs: 204000,
       genre: 'Pop',
