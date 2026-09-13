@@ -30,7 +30,9 @@ const itemsToCopy = [
   'manifest.json',
   'manifest.webmanifest',
   'assets',
-  'icons'
+  'icons',
+  'webfonts',
+  'fontawesome.min.css'
 ];
 
 for (const item of itemsToCopy) {

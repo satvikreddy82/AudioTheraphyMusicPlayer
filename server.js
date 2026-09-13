@@ -29,6 +29,9 @@ const MIME_TYPES = {
   '.mp3': 'audio/mpeg',
   '.mp4': 'audio/mp4',
   '.m4a': 'audio/mp4',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.ttf': 'font/ttf',
 };
 
 const COMMON_HEADERS = {
