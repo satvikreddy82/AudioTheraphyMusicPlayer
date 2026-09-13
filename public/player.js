@@ -164,6 +164,8 @@ const fpSpacer         = document.getElementById('fp-spacer');
 const fpArtwork        = document.getElementById('fp-artwork');
 const fpTitle          = document.getElementById('fp-title');
 const fpArtist         = document.getElementById('fp-artist');
+const fpPlaylistBtn    = document.getElementById('fp-playlist-btn');
+const fpPlaylistIcon   = document.getElementById('fp-playlist-icon');
 const fpPlay           = document.getElementById('fp-play');
 const fpPlayIcon       = document.getElementById('fp-play-icon');
 const fpPrev           = document.getElementById('fp-prev');
@@ -619,21 +621,29 @@ function renderAddToPlaylistModal() {
 }
 
 function updateNowPlayingPlaylistBtn() {
-  if (!npPlaylistBtn) return;
-  if (!state.currentTrack) {
-    npPlaylistBtn.style.display = 'none';
-    return;
+  const current = state.currentTrack;
+  const inPlaylist = current ? isTrackInAnyPlaylist(current.id) : false;
+
+  if (npPlaylistBtn) {
+    npPlaylistBtn.style.display = 'inline-flex';
+    npPlaylistBtn.classList.toggle('active', inPlaylist);
+    if (npPlaylistIcon) {
+      npPlaylistIcon.className = inPlaylist ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+    }
+    if (npPlaylistLabel) {
+      npPlaylistLabel.textContent = inPlaylist ? 'In Playlist' : 'Add to Playlist';
+    }
+    npPlaylistBtn.title = inPlaylist ? 'In Playlist (Manage)' : 'Add to Playlist';
   }
-  npPlaylistBtn.style.display = 'inline-flex';
-  const inPlaylist = isTrackInAnyPlaylist(state.currentTrack.id);
-  npPlaylistBtn.classList.toggle('active', inPlaylist);
-  if (npPlaylistIcon) {
-    npPlaylistIcon.className = inPlaylist ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+
+  if (fpPlaylistBtn) {
+    fpPlaylistBtn.style.display = 'inline-flex';
+    fpPlaylistBtn.classList.toggle('active', inPlaylist);
+    if (fpPlaylistIcon) {
+      fpPlaylistIcon.className = inPlaylist ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+    }
+    fpPlaylistBtn.title = inPlaylist ? 'In Playlist (Manage)' : 'Save to Playlist';
   }
-  if (npPlaylistLabel) {
-    npPlaylistLabel.textContent = inPlaylist ? 'In Playlist' : 'Add to Playlist';
-  }
-  npPlaylistBtn.title = inPlaylist ? 'In Playlist (Manage)' : 'Add to Playlist';
 }
 
 function updateAllPlaylistButtons() {
@@ -972,6 +982,59 @@ function sanitizeMediaUrl(urlStr, fallback = '') {
 // ─────────────────────────────────────────────
 
 /**
+ * Prepare a track in UI state without immediate auto-playback (safe for initial page load).
+ * Ensures all controls (play, next, prev, save) are active and populated immediately.
+ */
+function prepareTrack(track, queueIndex = 0) {
+  if (!track) return;
+  state.currentTrack = track;
+  state.currentIndex = queueIndex;
+  state.isPlaying    = false;
+
+  npCard.classList.add('has-track');
+  setVisible(npInfo, true);
+  setVisible(npControls, true);
+  setVisible(npLoading, false);
+
+  if (npArtwork) npArtwork.src = track.artworkUrl || createArtworkFallback(300);
+  if (npTitle) npTitle.textContent = track.title;
+  if (npArtist) npArtist.textContent = track.artist;
+  if (npAlbum) npAlbum.textContent = track.album || '';
+
+  const badgeText = document.getElementById('np-badge-text');
+  const badge     = document.getElementById('np-audio-badge');
+  const badgeIcon = badge ? badge.querySelector('i') : null;
+  if (badgeText) {
+    badgeText.textContent = track.isFullSong ? 'Full Song · 320kbps' : 'Ready to Play';
+    if (badgeIcon) badgeIcon.className = 'fa-solid fa-music';
+  }
+
+  updateNowPlayingPlaylistBtn();
+
+  const trackDuration = track.durationMs && track.durationMs > 1000
+    ? track.durationMs
+    : (track.isFullSong ? 180000 : 30000);
+  if (npCurrentTime) npCurrentTime.textContent = '0:00';
+  if (npDuration) npDuration.textContent = formatTime(Math.round(trackDuration / 1000));
+  if (npProgressFill) setProgress(npProgressFill, 0);
+  if (npProgressThumb) npProgressThumb.style.left = '0%';
+
+  if (fpArtwork) fpArtwork.src = track.thumbnailUrl || createArtworkFallback(52);
+  if (fpTitle) fpTitle.textContent = track.title;
+  if (fpArtist) fpArtist.textContent = track.artist;
+  if (fpCurrentTime) fpCurrentTime.textContent = '0:00';
+  if (fpDuration) fpDuration.textContent = formatTime(Math.round(trackDuration / 1000));
+  if (fpProgressFill) setProgress(fpProgressFill, 0);
+
+  showFixedPlayer(true);
+
+  if (btnPrev) btnPrev.disabled = false;
+  if (btnNext) btnNext.disabled = false;
+  if (fpPrev) fpPrev.disabled  = false;
+  if (fpNext) fpNext.disabled  = false;
+}
+
+/**
  * Load a track into the player.
  * @param {Track} track
  * @param {number} queueIndex - index in state.queue
@@ -1133,17 +1196,26 @@ function setPlayState(playing) {
 }
 
 function togglePlayPause() {
-  if (!state.currentTrack) return;
+  if (!state.currentTrack) {
+    if (state.queue && state.queue.length > 0) {
+      loadTrack(state.queue[0], 0);
+      return;
+    }
+    const cur = musicService.getCuratedFallbackTracks()[0];
+    loadTrack(cur, 0);
+    return;
+  }
 
   if (audio.paused) {
-    // If audio has no src yet (URL not resolved), re-trigger the load
+    // If audio has no src yet (prepared on page load), start audio load
     if (!audio.src || audio.src === window.location.href) {
       setVisible(npLoading, true);
       _startAudioLoad(state.currentTrack);
       return;
     }
     audio.play().then(() => setPlayState(true)).catch(() => {
-      showToast('Could not play audio. Try again.');
+      setVisible(npLoading, true);
+      _startAudioLoad(state.currentTrack);
     });
   } else {
     audio.pause();
@@ -1152,6 +1224,9 @@ function togglePlayPause() {
 }
 
 function playPrevious() {
+  if (state.queue.length === 0) {
+    state.queue = musicService.getCuratedFallbackTracks();
+  }
   if (state.queue.length === 0) return;
   let idx = state.currentIndex - 1;
   if (idx < 0) idx = state.queue.length - 1;
@@ -1159,6 +1234,9 @@ function playPrevious() {
 }
 
 function playNext() {
+  if (state.queue.length === 0) {
+    state.queue = musicService.getCuratedFallbackTracks();
+  }
   if (state.queue.length === 0) return;
   let idx = state.currentIndex + 1;
   if (idx >= state.queue.length) idx = 0;
@@ -1317,7 +1395,14 @@ async function loadTrending() {
       trendingBadge.style.color = '#888';
     }
 
-    // Trending tracks go into a separate pool — prepend to queue if user plays one
+    // Trending tracks populate the queue if user is not already playing
+    if (tracks.length > 0) {
+      if (state.queue.length <= 1 && !state.isPlaying) {
+        state.queue = [...tracks];
+        prepareTrack(tracks[0], 0);
+      }
+    }
+
     renderDiscoveryCards(tracks, trendingGrid);
     setVisible(trendingGrid, true);
 
@@ -1522,6 +1607,23 @@ if (btnPlaylistExplore) {
 
 if (npPlaylistBtn) {
   npPlaylistBtn.addEventListener('click', () => {
+    if (!state.currentTrack) {
+      const cur = musicService.getCuratedFallbackTracks()[0];
+      prepareTrack(cur, 0);
+    }
+    if (state.currentTrack) {
+      togglePlaylistTrack(state.currentTrack);
+    }
+  });
+}
+
+if (fpPlaylistBtn) {
+  fpPlaylistBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!state.currentTrack) {
+      const cur = musicService.getCuratedFallbackTracks()[0];
+      prepareTrack(cur, 0);
+    }
     if (state.currentTrack) {
       togglePlaylistTrack(state.currentTrack);
     }
@@ -1594,19 +1696,25 @@ function init() {
     switchTab('playlist');
   }
 
-  // Disable prev/next until something plays
-  btnPrev.disabled = true;
-  btnNext.disabled = true;
-  fpPrev.disabled  = true;
-  fpNext.disabled  = true;
+  // Pre-load default curated track so all buttons (Play, Next, Prev/Before, Save) are visible & active
+  const initialCurated = musicService.getCuratedFallbackTracks();
+  if (initialCurated && initialCurated.length > 0) {
+    state.queue = [...initialCurated];
+    prepareTrack(initialCurated[0], 0);
+  }
 
-  // Enable prev/next once we have a queue
+  // Ensure controls are enabled immediately
+  if (btnPrev) btnPrev.disabled = false;
+  if (btnNext) btnNext.disabled = false;
+  if (fpPrev) fpPrev.disabled  = false;
+  if (fpNext) fpNext.disabled  = false;
+
+  // Keep controls enabled whenever queue has tracks
   audio.addEventListener('play', () => {
-    const hasQueue = state.queue.length > 1;
-    btnPrev.disabled = !hasQueue;
-    btnNext.disabled = !hasQueue;
-    fpPrev.disabled  = !hasQueue;
-    fpNext.disabled  = !hasQueue;
+    if (btnPrev) btnPrev.disabled = false;
+    if (btnNext) btnNext.disabled = false;
+    if (fpPrev) fpPrev.disabled  = false;
+    if (fpNext) fpNext.disabled  = false;
   });
 
   // Safe image fallback listeners (no inline onerror needed)

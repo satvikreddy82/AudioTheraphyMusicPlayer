@@ -1024,6 +1024,34 @@ body {
   min-width: 0;
 }
 
+.fp-playlist-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+.fp-playlist-btn:hover {
+  background: rgba(124, 58, 237, 0.2);
+  border-color: rgba(167, 139, 250, 0.4);
+  color: white;
+  transform: scale(1.1);
+}
+.fp-playlist-btn.active {
+  background: rgba(124, 58, 237, 0.3);
+  border-color: var(--purple-light);
+  color: #c4b5fd;
+}
+
 .fp-title {
   font-size: 13px;
   font-weight: 500;
@@ -1241,17 +1269,66 @@ body {
   .header-brand span { display: none; } /* hide text label on tiny screens */
 
   .fp-inner {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 8px 14px;
-    gap: 6px;
+    gap: 10px;
   }
 
-  .fp-track-info { display: none; } /* hidden on mobile to save space */
+  .fp-track-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+  }
 
-  .fp-center { width: 100%; }
+  .fp-artwork {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+  }
 
-  .fp-vol-section { justify-content: center; }
+  .fp-text {
+    max-width: 130px;
+  }
+
+  .fp-title {
+    font-size: 12px;
+  }
+
+  .fp-artist {
+    font-size: 10px;
+  }
+
+  .fp-center {
+    flex-shrink: 0;
+    gap: 4px;
+  }
+
+  .fp-btn-row {
+    gap: 12px;
+  }
+
+  .fp-play-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .fp-ctrl-btn {
+    padding: 4px;
+    font-size: 14px;
+  }
+
+  .fp-progress-wrapper {
+    display: none;
+  }
+
+  .fp-vol-section {
+    display: none;
+  }
 
   .discovery-sections { padding: 0 16px 16px; }
 
@@ -1267,6 +1344,34 @@ body {
   }
 
   .song-card-art { width: 48px; height: 48px; }
+}
+
+/* ─────────────────────────────────────────────
+   TOUCH & MOBILE BUTTON VISIBILITY OVERRIDES
+───────────────────────────────────────────── */
+@media (hover: none), (max-width: 768px) {
+  .disc-card-play-overlay {
+    opacity: 1 !important;
+    background: transparent !important;
+    pointer-events: auto !important;
+  }
+  .disc-card-play-btn {
+    transform: scale(0.92);
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.6);
+  }
+  .disc-card-playlist-btn {
+    opacity: 1 !important;
+    background: rgba(5, 5, 5, 0.85) !important;
+  }
+  .song-card-play-btn {
+    background: linear-gradient(135deg, var(--purple-1), var(--purple-2)) !important;
+    color: white !important;
+    border-color: transparent !important;
+  }
+  .song-card-playlist-btn {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--text-secondary) !important;
+  }
 }
 
 /* ─────────────────────────────────────────────
