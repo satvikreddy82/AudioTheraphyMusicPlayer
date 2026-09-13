@@ -4,6 +4,7 @@
   "description": "A modern music streaming/discovery application",
   "main": "server.js",
   "scripts": {
+    "build": "node build.js",
     "start": "node server.js",
     "dev": "node server.js",
     "py": "python server.py"
