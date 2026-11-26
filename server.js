@@ -191,6 +191,10 @@ function proxyAudio(audioUrl, req, res) {
       streamRes.pipe(res);
     });
 
+    req.on('close', () => {
+      streamReq.destroy();
+    });
+
     streamReq.on('timeout', () => {
       streamReq.destroy();
       if (!res.headersSent) {

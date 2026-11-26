@@ -1,7 +1,9 @@
 /**
  * api/audio.js — Vercel Serverless Function
- * Streams JioSaavn CDN audio file with strict SSRF allowlist, method validation,
- * restricted CORS headers, and sanitized error responses.
+ *
+ * Securely streams JioSaavn CDN audio files with required Referer & Range headers
+ * to enable complete full-song playback and responsive seeking across all devices.
+ * Includes SSRF protection, method enforcement, and sanitized error responses.
  */
 
 import { Readable } from 'stream';
@@ -32,8 +34,6 @@ const DISALLOWED_HOSTS = new Set([
  */
 function validateAudioUrl(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
-
-  // Maximum reasonable URL length
   if (rawUrl.length > 1024) return null;
 
   let parsed;
@@ -110,9 +110,13 @@ export default async function handler(req, res) {
       fetchHeaders['Range'] = req.headers.range;
     }
 
-    // Set 15-second timeout to prevent resource exhaustion
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), 20000);
+
+    // Abort upstream fetch if client disconnects
+    req.on('close', () => {
+      controller.abort();
+    });
 
     const response = await fetch(validatedUrl.toString(), {
       headers: fetchHeaders,
@@ -136,8 +140,8 @@ export default async function handler(req, res) {
     const nodeStream = Readable.fromWeb(response.body);
     nodeStream.pipe(res);
   } catch (error) {
-    console.error('[API/Audio] Streaming error:', error);
     if (!res.headersSent) {
+      console.error('[API/Audio] Streaming error:', error.message);
       return res.status(502).json({ error: 'Audio stream unavailable' });
     }
   }

@@ -35,17 +35,21 @@
         <span>audio.theraphy._</span>
       </div>
 
-      <div class="navlink">
+      <div class="navlink" id="navlink">
         <a href="#home">Home</a>
         <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="player.html#playlist">My Playlist</a>
+        <a href="player.html#wellness">Audio Therapy</a>
+        <a href="player.html#playlist">My Library</a>
         <a href="player.html" class="nav-cta">Start Listening</a>
         <button class="pwa-install-btn nav-install-btn" id="nav-install-btn" aria-label="Install App" hidden>
           <i class="fa-solid fa-download" aria-hidden="true"></i>
           <span>Install App</span>
         </button>
       </div>
+
+      <button class="nav-hamburger" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
     </nav>
     <div class="hero">
       <div class="Content">
@@ -243,7 +247,49 @@
       </div>
     </div>
 
+    <!-- Mobile Bottom Navigation (Screens < 768px) -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+      <a href="index.html" class="active" aria-label="Home">
+        <i class="fa-solid fa-house" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+      <a href="player.html" aria-label="Explore music">
+        <i class="fa-solid fa-compass" aria-hidden="true"></i>
+        <span>Explore</span>
+      </a>
+      <a href="player.html#wellness" aria-label="Audio Therapy">
+        <i class="fa-solid fa-spa" aria-hidden="true"></i>
+        <span>Therapy</span>
+      </a>
+      <a href="player.html#playlist" aria-label="My Library">
+        <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+        <span>Library</span>
+      </a>
+    </nav>
+
+    <!-- Mobile Nav Toggle Script -->
+    <script>
+      const toggle = document.getElementById('nav-toggle');
+      const navlink = document.getElementById('navlink');
+      if (toggle && navlink) {
+        toggle.addEventListener('click', () => {
+          const open = navlink.classList.toggle('nav-open');
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          toggle.innerHTML = open
+            ? '<i class="fa-solid fa-xmark" aria-hidden="true"></i>'
+            : '<i class="fa-solid fa-bars" aria-hidden="true"></i>';
+        });
+        navlink.querySelectorAll('a').forEach(a => {
+          a.addEventListener('click', () => {
+            navlink.classList.remove('nav-open');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.innerHTML = '<i class="fa-solid fa-bars" aria-hidden="true"></i>';
+          });
+        });
+      }
+    </script>
+
     <!-- PWA Service Worker & Controller -->
-    <script src="pwa.js?v=2.2" defer></script>
+    <script src="pwa.js?v=4.0" defer></script>
   </body>
 </html>

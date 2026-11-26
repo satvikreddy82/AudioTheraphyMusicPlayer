@@ -24,6 +24,8 @@ const itemsToCopy = [
   'style.css',
   'player.css',
   'player.js',
+  'authService.js',
+  'wellnessService.js',
   'pwa.js',
   'musicService.js',
   'sw.js',

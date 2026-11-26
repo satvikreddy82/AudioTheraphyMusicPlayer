@@ -10,7 +10,7 @@
 
 'use strict';
 
-const CACHE_VERSION = 'audio-theraphy-v3';
+const CACHE_VERSION = 'audio-theraphy-v4';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE   = `${CACHE_VERSION}-runtime`;
 
@@ -22,6 +22,8 @@ const APP_SHELL_ASSETS = [
   '/style.css',
   '/player.css',
   '/musicService.js',
+  '/authService.js',
+  '/wellnessService.js',
   '/player.js',
   '/pwa.js',
   '/manifest.webmanifest',
